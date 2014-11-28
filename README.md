@@ -69,7 +69,9 @@ Then to really get the most out of the repo, you can access the template mailer.
 Some of the pages functionality:<br>
 <br>
 - Founders can upload their own companies as per normal, using pagelane's sweet form<br>
-- You can curate and upload new, white logos on the backend<br>
+- You can curate and upload new, white logos on the backend (/dashboard/logo), only once you upload a new logo will the startup be displayed on your page<br>
+- To repace a logo, simple upload a new logo, the old one will be overwritten<br>
+- Only click "Delete" on /dashboard/logo if you want to completely remove the startup, i.e. its spam <br>
 - All data is accessible from the dashboard or through the google cloud console<br>
 - you can collect mailers through the early adopter mailing list form<br>
 <br>
@@ -85,7 +87,10 @@ I think you have about 1GB of free storage on GAE, if you upload so many logos t
 You can read more about the google cloud platform at http://cloud.google.com
 <br>
 <br>
-..........if all this is too much for you look me up on slack and if I have a minute I'll help you out.
+..........if all this is too much for you look me up (@emile - Foundedx) on slack and if I have a minute I'll help you out.
+<br>
+<br>
+
 
 
 
