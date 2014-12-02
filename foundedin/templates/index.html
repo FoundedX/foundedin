@@ -47,6 +47,9 @@
 			.cbp-rfgrid li a div {
 				background: {{settings.logo_highlight_color}} !important;
 			}
+			.container .featured-title {
+				background-color: {{settings.bg_color}} !important;
+			}
 		</style>
 
 		<!-- template custom styles -->
@@ -88,7 +91,43 @@
                 <br><br>
 
 			</header>
+
+			{% block feature %}
+				{% if features %}
+				<br>
+				<div class="featured-line">
+	                <div class="featured-title" style="width:180px;">
+	                    <i class="fa fa-star-o"></i>&nbsp;&nbsp;&nbsp;Featured&nbsp;Startups
+	                </div>
+	            </div>
+				<br>
+				<ul class="cbp-rfgrid cbp-rfgrid2 clearfix">
+	                {% for f in features %}
+					<li>
+						<a 
+						{% if f.feature_external %}
+							href="{{f.startup.get().q3}}"
+						{% else %}
+							href="/feature/{{f.key.id()}}"
+						{% endif %}
+						 target="_blank"><img src="{{f.startup.get().new_logo}}" />
+							<div>
+								<h3>{{f.startup.get().q1}}</h3>
+							</div>
+						</a>
+					</li>
+					{% endfor %}
+	            </ul>
+	            {% endif %}
+			{% endblock %}
 			{% block companies %}
+				<br>
+				<div class="featured-line">
+	                <div class="featured-title" style="width:180px;">
+	                    <i class="fa fa-star-o"></i>&nbsp;&nbsp;&nbsp;All&nbsp;Startups
+	                </div>
+	            </div>
+				<br>
 				<ul class="cbp-rfgrid">
 					{% for s in startups %}
 						<li>
@@ -264,13 +303,6 @@
                 		{% endif %}
                 	{% endif %}
             	</span>
-                <!--<a href="http://foundedinnorway.com" class="no-link">
-                	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="50px" height="50px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
-						<path class="logo" d="M64.425,28.561c-0.783-3.459-6.787-19.515-8.093-21.473c-1.252-1.877-5.143-2.075-6.266-2.087  C50.065,5.001,50.064,5,50.064,5C50.045,5,50.022,5,50,5s-0.045,0-0.064,0c0,0-0.001,0.001-0.002,0.001  c-1.123,0.013-5.014,0.21-6.266,2.087c-1.306,1.958-7.31,18.014-8.093,21.473s1.787,5.372,4.683,6.582  c3.258,1.362,4.499,1.89,4.875,1.999c1.586,0.462,2.949,1.306,2.983,2.458c0.134,4.379-0.942,12.925-0.942,12.925  s-1.809,0.119-1.939,1.033s0.261,15.533,0,20.363c-0.261,4.829,0.392,19.058,1.175,20.232c0.715,1.072,3.166,0.84,3.591,0.791  c0.425,0.049,2.877,0.281,3.591-0.791c0.783-1.175,1.436-15.403,1.175-20.232c-0.261-4.83,0.131-19.449,0-20.363  s-1.939-1.033-1.939-1.033S51.75,43.979,51.884,39.6c0.035-1.152,1.397-1.997,2.983-2.458c0.376-0.109,1.617-0.637,4.875-1.999  C62.637,33.932,65.208,32.02,64.425,28.561z M59.529,28.478c0,0.264-0.145,0.478-0.323,0.478H40.421  c-0.179,0-0.323-0.214-0.323-0.478v-0.386L40.421,28h18.785l0.323,0.092V28.478z"/>
-					</svg>
-                </a>
-
-                <div style="margin: 30px">{{year}}</div>-->
                 <a href="http://foundedx.com" class="no-link">
                 	<img src="/static/images/Partner-badge.png" alt="Foundedx">
                 </a>
@@ -423,16 +455,9 @@
     </script>
     
     <!-- Google Analytics -->
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-	  ga('create', 'UA-27809253-13', 'auto');
-	  ga('send', 'pageview');
-
-	</script>
+	{% if settings.ga %}
+	  {{settings.ga|safe}}
+  	{% endif %}
 	
 	<!-- Twitter -->
 	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');

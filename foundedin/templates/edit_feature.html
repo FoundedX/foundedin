@@ -58,6 +58,22 @@
                         {% endfor %}
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Display on Front Page</label>
+                    {% if feature.front_page %}
+                        <input type="checkbox" name="display_on_front_page" value="yes" checked>
+                    {% else %}
+                        <input type="checkbox" name="display_on_front_page" value="yes">
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label>Link feature to external site (if this is unchecked features will link to a local feature page)</label>
+                    {% if feature.feature_external %}
+                        <input type="checkbox" name="feature_external" value="yes" checked>
+                    {% else %}
+                        <input type="checkbox" name="feature_external" value="yes">
+                    {% endif %}
+                </div>
                 <input type="submit" class="btn btn-default add" value="Save">
             </form>
         </div>

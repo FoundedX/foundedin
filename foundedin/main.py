@@ -108,6 +108,7 @@ class HomePage(MainHandler):
         settings = model.Settings.query().get()
         mail = model.MandrillApi.query().get()
         tw = model.TwitterApi.query().get()
+        features = model.Feature.query(model.Feature.front_page == True, model.Feature.live == True).fetch()
         #startups = model.Startup.query(model.Startup.approved == True).order(model.Startup.q1).fetch(500)
 
         startups, next_curs, more = model.Startup.query(model.Startup.approved == True).order(model.Startup.q1).fetch_page(500, start_cursor=curs)
@@ -119,7 +120,7 @@ class HomePage(MainHandler):
         if not settings:
             self.response.out.write("If you are the admin for this page please navigate to /dashboard and complete the page setup")
         else:
-            self.render("index.html", startups=startups, year=year, settings=settings, mail=mail, tw=tw, next_curs=next_curs)
+            self.render("index.html", startups=startups, year=year, settings=settings, mail=mail, tw=tw, next_curs=next_curs, features=features)
 
 class ViewLogos(MainHandler):
     def get(self):
@@ -209,6 +210,7 @@ class Dashboard(MainHandler):
         seo_keywords = self.request.get("seo_keywords")
         share_url = self.request.get("share_url")
         css = self.request.get("css")
+        ga = self.request.get("ga")
 
         tw_handle = self.request.get("tw_handle")
         tw_short_url = self.request.get("tw_short_url")
@@ -251,7 +253,8 @@ class Dashboard(MainHandler):
                     logo_credit=logo_credit,
                     logo_credit_name=logo_credit_name,
                     about_html=about_html,
-                    css=css
+                    css=css,
+                    ga=ga,
                 )
             settings.put()
         else:
@@ -279,6 +282,7 @@ class Dashboard(MainHandler):
             settings.logo_credit_name=logo_credit_name
             settings.about_html=about_html
             settings.css=css
+            settings.ga=ga
             settings.put()
 
         tw = model.TwitterApi.query().get()
@@ -358,6 +362,22 @@ class DashboardFeature(MainHandler):
         founder = self.request.get_all("founder")
         podcast = self.request.get("podcast")
         startup_id = self.request.get("startup_id")
+        front_page = self.request.get("display_on_front_page")
+        feature_external = self.request.get("feature_external")
+
+        logging.error(".... front page")
+        logging.error(front_page)
+
+        if front_page == "yes":
+            front_page = True
+        else:
+            front_page = False
+        
+        if feature_external == "yes":
+            feature_external=True
+        else:
+            feature_external = False
+
         startup = model.Startup.get_by_id(int(startup_id))
 
         founder_list = []
@@ -380,7 +400,7 @@ class DashboardFeature(MainHandler):
                 }
             founder_list.append(obj)
 
-        f = model.Feature(description=description, founder=founder_list, podcast=podcast, startup=startup.key)
+        f = model.Feature(description=description, founder=founder_list, podcast=podcast, startup=startup.key, front_page=front_page, feature_external=feature_external)
         f.put()
         self.redirect("/dashboard/featured_articles")
 
@@ -398,6 +418,17 @@ class DashboardFeatureEdit(MainHandler):
         podcast = self.request.get("podcast")
         startup_id = self.request.get("startup_id")
         startup = model.Startup.get_by_id(int(startup_id))
+        front_page = self.request.get("display_on_front_page")
+        feature_external = self.request.get("feature_external")
+
+        if front_page == "yes":
+            front_page = True
+        else:
+            front_page = False
+        if feature_external == "yes":
+            feature_external=True
+        else:
+            feature_external = False
 
         feature_id = feature_id
 
@@ -426,6 +457,8 @@ class DashboardFeatureEdit(MainHandler):
         feature.founder = founder_list
         feature.podcast = podcast
         feature.startup = startup.key
+        feature.front_page = front_page
+        feature.feature_external = feature_external
 
         feature.put()
         self.redirect("/dashboard/featured_articles")

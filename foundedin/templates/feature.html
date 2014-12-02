@@ -3,8 +3,9 @@
 {% block style %}
 	<style type="text/css">
 		body{
-			background-color: #FFFFFF;
-			background-image: url(/static/images/background.jpg);
+			/*background-color: #FFFFFF;
+			background-image: url(/static/images/background.jpg);*/
+			background-color: {{settings.link_color}};
 	        background-repeat: no-repeat;
 	        background-position: top left;
 	        background-size: cover;
@@ -21,8 +22,8 @@
 		.container{
 			max-width: 1200px !important;
 			margin: auto;
-			color: #3AB54A;
-			background-color: #f5f5f5;
+			color: {{settings.link_color}};
+			background-color: {{settings.bg_color}};
 		}
 
 		.container > header {
@@ -33,11 +34,11 @@
 		}
 
 		a:hover{
-			color: #3AB54A;
+			color: {{settings.link_color}};
 		}
 
 		.green_bg{
-			background-color: #3AB54A;
+			background-color: {{settings.link_color}};
 		}
 		.white_bg{
 			background-color: #FFFFFF;
@@ -118,8 +119,8 @@
 		}
 
 		.green_top_bottom{
-			border-top: 2px solid #3AB54A;
-			border-bottom: 2px solid #3AB54A;
+			border-top: 2px solid {{settings.link_color}};
+			border-bottom: 2px solid {{settings.link_color}};
 		}
 
 		.headling_copy{
@@ -226,11 +227,12 @@
 
 
 {% block header %}
-			<header class="clearfix green_bg">
-            	<a href="http://foundedinsouthafrica.com" class="no-link">&nbsp;&nbsp;<img src="/static/images/logo.png" alt="Logo">&nbsp;&nbsp;</a>
-			</header>
-			{% endblock %}
-
+<!--<header class="clearfix green_bg">
+	<a href="{{settings.share_url}}" class="no-link">&nbsp;&nbsp;<img src="/static/images/logo.png" alt="Logo">&nbsp;&nbsp;</a>
+</header>-->
+{% endblock %}
+{% block features %}
+{% endblock %}
 {% block companies %}
 	
 	<div id="inner_container">

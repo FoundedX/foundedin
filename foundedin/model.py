@@ -23,12 +23,14 @@ class EarlyAdopter(ndb.Model):
 
 class Feature(ndb.Model):
     startup = ndb.KeyProperty(Startup)
-    description = ndb.StringProperty()
+    description = ndb.TextProperty()
     founder = ndb.JsonProperty(repeated=True)
     podcast = ndb.StringProperty()
     live = ndb.BooleanProperty(default=False)
     blob_key = ndb.BlobKeyProperty()
     new_logo = ndb.StringProperty()
+    front_page = ndb.BooleanProperty()
+    feature_external = ndb.BooleanProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 class TwitterApi(ndb.Model):
@@ -71,6 +73,7 @@ class Settings(ndb.Model):
     logo_credit_name = ndb.StringProperty()
     about_html = ndb.TextProperty()
     css = ndb.TextProperty()
+    ga = ndb.TextProperty()
 
 
 
