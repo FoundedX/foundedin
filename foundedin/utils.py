@@ -49,6 +49,12 @@ def save_blob_to_image_obj(blob_key, user_obj, img_type):
         
         return serving_url
 
+def check_alphanumeric(something):
+    something = re.sub(r'\W+', '', something)
+    something = something.lower()
+    return something
+
+
 #Send a mail to your early evangelists
 def send_mail(email, ea_id, html):
     

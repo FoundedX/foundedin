@@ -35,6 +35,7 @@ class Feature(ndb.Model):
 
 class TwitterApi(ndb.Model):
     tw_handle = ndb.StringProperty()
+    auto_tweet = ndb.StringProperty()
     tw_short_url = ndb.StringProperty()
     tw_consumer_key = ndb.StringProperty()
     tw_consumer_secret = ndb.StringProperty()
@@ -58,6 +59,7 @@ class Settings(ndb.Model):
     svg_html = ndb.TextProperty()
     bg_color = ndb.StringProperty()
     link_color = ndb.StringProperty()
+    nav_color = ndb.StringProperty()
     logo_highlight_color = ndb.StringProperty()
     intro_html = ndb.TextProperty()
     in_common_1 = ndb.StringProperty()
@@ -75,7 +77,10 @@ class Settings(ndb.Model):
     css = ndb.TextProperty()
     ga = ndb.TextProperty()
 
-
+class StaticPage(ndb.Model):
+    page_url = ndb.StringProperty()
+    title = ndb.StringProperty()
+    html = ndb.TextProperty()
 
 
 

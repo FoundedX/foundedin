@@ -109,6 +109,9 @@ class HomePage(MainHandler):
         mail = model.MandrillApi.query().get()
         tw = model.TwitterApi.query().get()
         features = model.Feature.query(model.Feature.front_page == True, model.Feature.live == True).fetch()
+
+        pages = model.StaticPage.query().fetch()
+
         #startups = model.Startup.query(model.Startup.approved == True).order(model.Startup.q1).fetch(500)
 
         startups, next_curs, more = model.Startup.query(model.Startup.approved == True).order(model.Startup.q1).fetch_page(500, start_cursor=curs)
@@ -120,7 +123,7 @@ class HomePage(MainHandler):
         if not settings:
             self.response.out.write("If you are the admin for this page please navigate to /dashboard and complete the page setup")
         else:
-            self.render("index.html", startups=startups, year=year, settings=settings, mail=mail, tw=tw, next_curs=next_curs, features=features)
+            self.render("index.html", startups=startups, year=year, settings=settings, mail=mail, tw=tw, next_curs=next_curs, features=features, pages=pages)
 
 class ViewLogos(MainHandler):
     def get(self):
@@ -177,7 +180,20 @@ class About(MainHandler):
         mail = model.MandrillApi.query().get()
         tw = model.TwitterApi.query().get()
         year = datetime.datetime.now().year
-        self.render("about.html", year=year, settings=settings, mail=mail, tw=tw)
+        pages = model.StaticPage.query().fetch()
+        self.render("about.html", year=year, settings=settings, mail=mail, tw=tw, pages=pages)
+
+class StaticPage(MainHandler):
+    def get(self, page_url):
+        settings = model.Settings.query().get()
+        mail = model.MandrillApi.query().get()
+        tw = model.TwitterApi.query().get()
+        year = datetime.datetime.now().year
+
+        page = model.StaticPage.query(model.StaticPage.page_url == page_url).get()
+        pages = model.StaticPage.query().fetch()
+        self.render("static_page.html", page=page, pages=pages, settings=settings, tw=tw, mail=mail)
+
 
 class Dashboard(MainHandler):
     def get(self):
@@ -192,6 +208,7 @@ class Dashboard(MainHandler):
         bg_color = self.request.get("bg_color")
         link_color = self.request.get("link_color")
         logo_highlight_color = self.request.get("logo_highlight_color")
+        nav_color = self.request.get("nav_color")
         intro_html = self.request.get("intro_html")
         in_common_1 = self.request.get("in_common_1")
         in_common_2 = self.request.get("in_common_2")
@@ -213,6 +230,7 @@ class Dashboard(MainHandler):
         ga = self.request.get("ga")
 
         tw_handle = self.request.get("tw_handle")
+        auto_tweet = self.request.get("auto_tweet")
         tw_short_url = self.request.get("tw_short_url")
         tw_consumer_key = self.request.get("tw_consumer_key")
         tw_consumer_secret = self.request.get("tw_consumer_secret")
@@ -240,6 +258,7 @@ class Dashboard(MainHandler):
                     bg_color=bg_color,
                     link_color=link_color,
                     logo_highlight_color=logo_highlight_color,
+                    nav_color=nav_color,
                     intro_html=intro_html,
                     in_common_1=in_common_1,
                     in_common_2=in_common_2,
@@ -267,6 +286,7 @@ class Dashboard(MainHandler):
             settings.bg_color=bg_color
             settings.link_color=link_color
             settings.logo_highlight_color=logo_highlight_color
+            settings.nav_color=nav_color
             settings.intro_html=intro_html
             settings.in_common_1=in_common_1
             settings.in_common_2=in_common_2
@@ -295,6 +315,7 @@ class Dashboard(MainHandler):
                     tw_consumer_secret=tw_consumer_secret,
                     tw_access_token_key=tw_access_token_key,
                     tw_access_token_secret=tw_access_token_secret,
+                    auto_tweet=auto_tweet,
                 )
             tw.put()
         else:
@@ -304,6 +325,7 @@ class Dashboard(MainHandler):
             tw.tw_consumer_secret=tw_consumer_secret
             tw.tw_access_token_key=tw_access_token_key
             tw.tw_access_token_secret=tw_access_token_secret
+            tw.auto_tweet=auto_tweet
             tw.put()
 
         mail = model.MandrillApi.query().get()
@@ -342,6 +364,34 @@ class DashboardLogo(MainHandler):
     def get(self):
         startups = model.Startup.query().order(-model.Startup.q1).fetch(500)
         self.render("dashboard_logo.html", startups=startups)
+
+class DashboardStaticPage(MainHandler):
+    def get(self):
+
+        pages = model.StaticPage.query().fetch()
+
+        self.render("dashboard_static_page.html", pages=pages)
+
+    def post(self):
+        html = self.request.get("html")
+        title = self.request.get("title")
+        page_url = self.request.get("page_url")
+        pid = self.request.get("pid")
+
+        page_url = utils.check_alphanumeric(page_url)
+
+        if pid:
+            page = model.StaticPage.get_by_id(int(pid))
+            page.html = html
+            page.title = title
+            page.page_url = page_url
+            page.put()
+        else:
+            page = model.StaticPage(html=html, page_url=page_url, title=title)
+            page.put()
+
+        self.redirect("/dashboard/static_page")
+
 
 class DashboardFeaturedArticles(MainHandler):
     def get(self):
@@ -606,8 +656,6 @@ class Upload(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, startup_id):
         upload_files = self.get_uploads('new_logo')
 
-        logging.error(upload_files)
-
         blob_info = upload_files[0]
         blob_key = blob_info.key()
 
@@ -628,28 +676,42 @@ class Upload(blobstore_handlers.BlobstoreUploadHandler):
 
         year = datetime.datetime.now().year
 
-        if startup.q4:
-            if int(startup.q2) == year:
-                status = "New #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
-                #status = "Check out the hot new SA #startup, %s, via @foundedinsa bit.ly/1ugm5eG" % startup.q4
-            else:
-                status = "Featured #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
+
+        auto_tweet = tw.auto_tweet
+        if not auto_tweet:
+            status = "New #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
         else:
-            if int(startup.q2) == year:
-                status = "New #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
+            status = auto_tweet.replace("*MYHANDLE*", tw.tw_handle)
+            if startup.q4:
+                status = status.replace("*SUHANDLE*", startup.q4)
             else:
-                status = "Featured #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
+                status = status.replace("*SUHANDLE*", '')
+
+            if tw.tw_short_url:
+                status = status.replace("*SHORTURL*", tw.tw_short_url)
+            else:
+                if tw.tw_handle:
+                    status = status.replace("*SHORTURL*", tw.tw_handle)
+                else:
+                    status = status.replace("*SHORTURL*", '')
+            status = status.replace("*SUNAME*", startup.q1)
+
+        # if startup.q4:
+        #     if int(startup.q2) == year:
+        #         status = "New #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
+        #     else:
+        #         status = "Featured #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
+        # else:
+        #     if int(startup.q2) == year:
+        #         status = "New #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
+        #     else:
+        #         status = "Featured #startup on %s: %s via %s" % ( tw.tw_short_url, startup.q4, tw.tw_handle )
 
         try:
             tweet(status)
-            #pass
         except tweepy.TweepError as e:
             logging.error(e.response.status)
 
-
-        #status = "Checkout the hot new SA startup, %s" % startup.q4
-
-        #tweet(serving_url, status)
 
         self.redirect("/dashboard/logo")
 
@@ -859,12 +921,15 @@ app = webapp2.WSGIApplication([
     ('/archive', Archive),
     #('/tweet/(\w+)', TweetStartup),
     ('/about', About),
+    ('/page/(\w+)', StaticPage),
     ('/dashboard', Dashboard),
     ('/dashboard/startups', DashboardStartups),
     ('/dashboard/logo', DashboardLogo),
     ('/dashboard/feature', DashboardFeature),
     ('/dashboard/feature_edit/(\w+)', DashboardFeatureEdit),
     ('/dashboard/featured_articles', DashboardFeaturedArticles),
+    ('/dashboard/static_page', DashboardStaticPage),
+    
     ('/feature_golive/(\w+)', FeatureGoLive),
     ('/feature_deactivate/(\w+)', FeatureDeactivate),
     ('/feature/(\w+)', Feature),

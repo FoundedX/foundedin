@@ -50,6 +50,49 @@
 			.container .featured-title {
 				background-color: {{settings.bg_color}} !important;
 			}
+
+			.cbp-spmenu {
+			    background: {{settings.bg_color}} !important;
+			}
+
+			.cbp-spmenu h3 {
+			    color: #fff;
+			    background: none;
+			}
+
+			.cbp-spmenu a {
+			    color: #fff;
+			}
+
+			.cbp-spmenu a:hover {
+			    background: none;
+			}
+
+			{% if settings.nav_color %}
+				.cbp-spmenu a {
+				    background: {{settings.nav_color}} !important;
+				    color: #fff;
+				}
+			{% else %}
+				.cbp-spmenu a {
+				    background: {{settings.link_color}} !important;
+				    color: #fff;
+				}
+			{% endif %}
+			{% if settings.nav_color %}
+				.cbp-spmenu a:active {
+				    background: {{settings.nav_color}} !important;
+				    opacity: 0.5;
+				    color: #fff;
+				}
+			{% else %}
+				.cbp-spmenu a:active {
+				    background: {{settings.link_color}} !important;
+				    opacity: 0.5;
+				    color: #fff;
+				}
+			{% endif %}
+
 		</style>
 
 		<!-- template custom styles -->
@@ -64,7 +107,23 @@
 		<script src="/static/js/modernizr.custom.js"></script>
 		<script type="text/javascript" src="/static/js/modernizr.custom_min_form.js"></script>
 	</head>
-	<body>
+	<body class="cbp-spmenu-push">
+		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right" id="menuRight">
+            <a href="/" class="current">Founded in {{settings.name}}</a>
+            <a href="/about">About&nbsp;the&nbsp;initiative</a>
+            <a href="mailto:{{mail.reply_to}}">Contact</a>
+            {% for p in pages %}
+            	<a href="/page/{{p.page_url}}">{{p.title}}</a>
+            {% endfor %}
+            <!-- <a class="typeform-share link" href="https://weekly.typeform.com/to/HHO2Uc" data-mode="2" target="_blank">Join&nbsp;the&nbsp;list</a>
+            <a href="https://drive.google.com/folderview?id=0B7rp4qZAI1DoN3haMk0zTHA4aTg&amp;usp=sharing" target="_blank">Press&nbsp;kit&nbsp;&nbsp;<i class="fa fa-external-link" style="font-size:14px;"></i></a>
+            <a href="faq">FAQ</a>
+            <a href="advertise">Advertise</a>
+            <a href="http://foundedinholland.spreadshirt.nl/" target="_blank">Shop&nbsp;&nbsp;<i class="fa fa-external-link" style="font-size:14px;"></i></a>
+            <a href="mailto:join@foundedinholland.com" target="_blank">Contact</a> -->
+            <a href="http://foundedx.com" target="_blank">Founded&nbsp;X&nbsp;&nbsp;<i class="fa fa-external-link" style="font-size:14px;"></i></a>
+        </nav>
+		<a id="showRightPush" class="toggle-menu menu-right push-body menu-icon jPushMenuBtn menu-active"><i class="fa fa-bars"></i></a>
 		<div class="container">
 
 			<header class="clearfix">
@@ -249,8 +308,8 @@
                 </div>
 
                 <span class="join-box-span">
-                	<h2>Become an</h2>
-                	<a id="register_ea" class="link join-button" href="#">early adopter</a>
+                	<h2>Join our</h2>
+                	<a id="register_ea" class="link join-button" href="#">Mailing List</a>
 
             	</span>
 
@@ -275,12 +334,6 @@
 							</div><!-- /simform-inner -->
 							<span class="final-message"></span>
 						</form><!-- /simform -->
-						<p>
-							Share your email address with us and become an <a href="http://en.wikipedia.org/wiki/Early_adopter" target="_blank">early adopter</a>, we'll contact you if there are any exciting opportunities that our startups offer.
-						</p>
-						<p>
-							We will only share your email address with startups we feel are trustworthy and can offer exciting opportunities to consumers, you will be able to unsubscribe at any time.
-						</p>
                 </div>
                 
             </div>
@@ -313,6 +366,13 @@
 
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+	<script type="text/javascript" src="/static/js/jPushMenu.js"></script>
+	<script>
+		jQuery(document).ready(function($) {
+			$('.toggle-menu').jPushMenu();
+		});
+	</script>
 
     <script type="text/javascript">
     	$("body").on("click", "#join_list", function(e){

@@ -452,6 +452,13 @@ a.no-link {
 	border-radius: 0.250em;
 }
 
+/* - - - - - CUSTOM STATIC PAGE - - - - -*/
+
+.custom_page{
+	padding: 2em;
+	min-height: 100%;
+}
+
 
 
 

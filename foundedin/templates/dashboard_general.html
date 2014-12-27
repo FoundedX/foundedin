@@ -64,6 +64,15 @@
                     {% endif %}
                 </div>
 
+                <div class="form-group">
+                    <label>Navigation Colour</label>
+                    {% if settings.nav_color %}
+                    <input name="nav_color" type="text" class="form-control" placeholder="eg. #eee" value="{{settings.nav_color}}">
+                    {% else %}
+                    <input name="nav_color" type="text" class="form-control" placeholder="eg. #eee">
+                    {% endif %}
+                </div>
+
                 <h3><u>SEO</u></h3>
                 <div class="form-group">
                     <label>Page title</label>
@@ -246,6 +255,23 @@
                     <input name="tw_short_url" class="form-control" placeholder="eg. bit.ly/1ugm5eG">
                     {% endif %}
                 </div>
+
+                <div class="form-group">
+                    <label>Auto tweet</label>
+                    <p>Type the text you would like to tweet everytime a new startup is added. Please ensure that the tweet does not exceed the normal Twitter character limit (take into consideration the <u>dynamic content</u>). The tweet will be triggered everytime you upload the white logo, please use the following placeholders for <u>dynamic content</u>:</p>
+                    <ul>
+                        <li> *MYHANDLE* = your twitter handle </li>
+                        <li> *SUHANDLE* = twitter handle of the startup, if they have included a handle </li>
+                        <li> *SHORTURL* = your shortened URL </li>
+                        <li> *SUNAME* = the startup's name </li>
+                    </ul>
+                    {% if tw.auto_tweet %}
+                    <input name="auto_tweet" class="form-control" placeholder="eg. bit.ly/1ugm5eG" value="{{tw.auto_tweet}}">
+                    {% else %}
+                    <input name="auto_tweet" class="form-control" placeholder="eg. New Startup on *SHORTURL*, *SUNAME*, *MYHANDLE*, *SUHANDLE*" value="New Startup on *SHORTURL*, *SUNAME*, *MYHANDLE*, *SUHANDLE*">
+                    {% endif %}
+                </div>
+
                 <div class="form-group">
                     <label>CONSUMER_KEY</label>
                     {% if tw.tw_consumer_key %}
@@ -370,6 +396,11 @@
                     <input name="logo_highlight_color" type="text" class="form-control" placeholder="eg. #ffffff">
                 </div>
 
+                <div class="form-group">
+                    <label>Navigation Colour</label>
+                    <input name="nav_color" type="text" class="form-control" placeholder="eg. #eee">
+                </div>
+
                 <h3><u>SEO</u></h3>
                 <div class="form-group">
                     <label>Page title</label>
@@ -470,6 +501,19 @@
                     <label>Shortened link to your Foundedx page</label>
                     <input name="tw_short_url" class="form-control" placeholder="eg. bit.ly/1ugm5eG">
                 </div>
+
+                <div class="form-group">
+                    <label>Auto tweet</label>
+                    <p>Type the text you would like to tweet everytime a new startup is added. Please ensure that the tweet does not exceed the normal Twitter character limit (take into consideration the <u>dynamic content</u>). The tweet will be triggered everytime you upload the white logo, please use the following placeholders for <u>dynamic content</u>:</p>
+                    <ul>
+                        <li> *MYHANDLE* = your twitter handle </li>
+                        <li> *SUHANDLE* = twitter handle of the startup, if they have included a handle </li>
+                        <li> *SHORTURL* = your shortened URL </li>
+                        <li> *SUNAME* = the startup's name </li>
+                    </ul>
+                    <input name="auto_tweet" class="form-control" placeholder="eg. New Startup on *SHORTURL*, *SUNAME*, *MYHANDLE*, *SUHANDLE*" value="New Startup on *SHORTURL*, *SUNAME*, *MYHANDLE*, *SUHANDLE*">
+                </div>
+
                 <div class="form-group">
                     <label>CONSUMER_KEY</label>
                     <input name="tw_consumer_key" class="form-control">
